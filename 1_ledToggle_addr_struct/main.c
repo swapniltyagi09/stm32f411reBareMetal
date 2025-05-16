@@ -20,15 +20,6 @@
 #define RCC_OFFSET                  (0x00003800UL)
 #define RCC_BASE                    (AHB1_BASE + RCC_OFFSET)
 
-#define RCC_AHB1EN_REGISTER_OFFEST  (0x00000030UL)
-#define RCC_AHB1EN_REGISTER         (*(volatile unsigned int*)(RCC_BASE + RCC_AHB1EN_REGISTER_OFFEST))
-
-#define GPIOA_MODER_OFFSET          (0x00000000UL)
-#define GPIOA_MODER_REGISTER        (*(volatile unsigned int*)(GPIO_BASE + GPIOA_MODER_OFFSET))
-
-#define GPIOA_ODR_OFFSET            (0x00000014UL)
-#define GPIOA_ODR_REGISTER          (*(volatile unsigned int*)(GPIO_BASE + GPIOA_ODR_OFFSET))
-
 #define GPIOAEN                     (1U << 0)
 
 #define PIN5                        (1U << 5)
