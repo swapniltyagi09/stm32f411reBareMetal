@@ -19,11 +19,11 @@ CFLAGS = $(INCLUDE_FLAGS) -DSTM32F411xE -mcpu=$(MCU) -mthumb -nostdlib -Wall
 #-Wall Enable all compiler warnings to help catch potential issues in the code
 
 #Linker Scripts
-LDFLAGS_FLASH = -TSTM32F411RETX_FLASH.ld #Linker script for flash memory
+LDFLAGS_FLASH = -T../linkerScripts/STM32F411RETX_FLASH.ld #Linker script for flash memory
 
 #Source Files and output Names
 SRCS = main.c #The main c program file
-SATARTUP = startup_stm32f411retx.s #Startup code for STM32F411RE
+SATARTUP = ../startupScripts/startup_stm32f411retx.s #Startup code for STM32F411RE
 #The startup code is responsible for setting up the microcontroller's stack pointer and initializing the data and bss sections before calling the main function.
 #The startup code is usually written in assembly language and is specific to the microcontroller being used.
 #The linker script defines the memory layout of the microcontroller and specifies where the code and data sections should be placed in memory.
