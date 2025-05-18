@@ -2,7 +2,7 @@
 #This Makefile is used to compile and link a bare-metal program for the STM32F411RE microcontroller using the ARM GCC toolchain.
 #It includes rules for building the project, cleaning up build artifacts, and flashing the program to the microcontroller using OpenOCD.
 #Makefile for STM32F411RE Baremetal
-TARGET = 1_ledToggle_addr_struct
+TARGET = 4_gpio_input
 CC = arm-none-eabi-gcc #Compiler for ARM Cortex-M
 OBJCOPY = arm-none-eabi-objcopy #Convert ELF to binary
 GDB = gdb-multiarch #Debugger for embedded systems
