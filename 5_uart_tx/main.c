@@ -1,94 +1,56 @@
-#include <stdint.h>
 #include "stm32f4xx.h"
 
-#define GPIOAEN			(1U<<0)
-#define UART2EN			(1U<<17)
-
-#define CR1_TE			(1U<<3)
-#define CR1_UE			(1U<<13)
-#define SR_TXE			(1U<<7)
-
-
-
-#define SYS_FREQ		16000000
+#define SYS_FREQ		(16000000)
 #define APB1_CLK		SYS_FREQ
+#define UART2_BAUDRATE	115200
 
-#define UART_BAUDRATE		115200
+void usart2TxInit(){
+	/*****Configure USART2 GPIO PIN*****/
+	/*Enable clock access to GPIOA*/
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 
-static void uart_set_baudrate(USART_TypeDef *USARTx, uint32_t PeriphClk,  uint32_t BaudRate);
-static uint16_t compute_uart_bd(uint32_t PeriphClk, uint32_t BaudRate);
+	/*Set PA2 mode to alternate Function mode*/
+	GPIOA->MODER &= ~(GPIO_MODER_MODER2_0);
+	GPIOA->MODER |= GPIO_MODER_MODER2_1;
 
-void uar2_tx_init(void);
-void uart2_write(int ch);
+	/*Set PA2 alternate function type as USART2_TX (AF07)*/
+	GPIOA->AFR[0] |= GPIO_AFRL_AFSEL2_0;
+	GPIOA->AFR[0] |= GPIO_AFRL_AFSEL2_1;
+	GPIOA->AFR[0] |= GPIO_AFRL_AFSEL2_2;
+	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL2_3);
+
+	/*Configure USART2 module*/
+	/*Enable clock access to USART2*/
+	RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+
+	/*Conigure the USART2 Baud Rate*/
+	USART2->BRR = (SYS_FREQ + (UART2_BAUDRATE/2))/UART2_BAUDRATE;
+
+	/*Configure the transfer direction*/
+	USART2->CR1 = USART_CR1_TE; //Clean everything and only set TE bit as 1 , to enable transmission mode
+
+	/*Enable the USART2 module*/
+	USART2->CR1 |= USART_CR1_UE;
+
+}
+
+void usart2DataWrite(int ch){
+	/*Make sure that transmit data regster is empty*/
+	while(!(USART2->SR & USART_SR_TXE)){}
+
+	/*Write to transmit data register*/
+	USART2->DR = ch & USART_DR_DR;
+}
 
 void _init(){}
 
-int main(void)
-{
+int main(void){
 
+	usart2TxInit();
 
-	uar2_tx_init();
-
-	while(1)
-	{
-		uart2_write('M');
+	while(1){
+		usart2DataWrite('Y');
 	}
+
+	return 0;
 }
-
-
-void uar2_tx_init(void)
-{
-	/****************Configure uart gpio pin***************/
-	/*Enable clock access to gpioa */
-	RCC->AHB1ENR |= GPIOAEN;
-
-	/*Set PA2 mode to alternate function mode*/
-	GPIOA->MODER &=~(1U<<4);
-	GPIOA->MODER |= (1U<<5);
-
-	/*Set PA2 alternate function type to UART_TX (AF07)*/
-	GPIOA->AFR[0] |= (1U<<8);
-	GPIOA->AFR[0] |= (1U<<9);
-	GPIOA->AFR[0] |= (1U<<10);
-	GPIOA->AFR[0] &= ~(1U<<11);
-
-
-	/****************Configure uart module ***************/
-	/*Enable clock access to uart2 */
-	RCC->APB1ENR |= UART2EN;
-
-	/*Configure baudrate*/
-	uart_set_baudrate(USART2,APB1_CLK,UART_BAUDRATE);
-
-	/*Configure the transfer direction*/
-	 USART2->CR1 =  CR1_TE;
-
-	/*Enable uart module*/
-	 USART2->CR1 |= CR1_UE;
-
-
-}
-
-
-void uart2_write(int ch)
-{
-  /*Make sure the transmit data register is empty*/
-	while(!(USART2->SR & SR_TXE)){}
-
-  /*Write to transmit data register*/
-	USART2->DR	=  (ch & 0xFF);
-}
-
-
-
-
-static void uart_set_baudrate(USART_TypeDef *USARTx, uint32_t PeriphClk,  uint32_t BaudRate)
-{
-	USARTx->BRR =  compute_uart_bd(PeriphClk,BaudRate);
-}
-
-static uint16_t compute_uart_bd(uint32_t PeriphClk, uint32_t BaudRate)
-{
-	return ((PeriphClk + (BaudRate/2U))/BaudRate);
-}
-
