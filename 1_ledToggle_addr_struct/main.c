@@ -73,9 +73,6 @@ int main(void){
     GPIOA->MODER |= (1U << 10); // Set PA5 as output mode
     GPIOA->MODER &= ~(1U << 11); // Clear PA5 mode bits
 
-    //GPIOA_MODER_REGISTER |= (1U << 10);
-    //GPIOA_MODER_REGISTER &= ~(1U << 11);
-
     while(1){
         GPIOA->ODR  ^= LED_PIN;
         //for(int i = 0; i < 500000 ; i++){}
