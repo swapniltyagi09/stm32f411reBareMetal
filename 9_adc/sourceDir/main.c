@@ -15,7 +15,7 @@ int main(void){
     while(1){
         startConversion();
         sensorValue = adcRead();
-        printf("Sensor Value : %lu\n\r",sensorValue);
+        printf("%lu\n\r",sensorValue);
 
     }
 
