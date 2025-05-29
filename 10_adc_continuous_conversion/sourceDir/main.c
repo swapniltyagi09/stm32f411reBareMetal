@@ -1,0 +1,22 @@
+#include "stm32f4xx.h"
+#include "adc.h"
+#include "usart.h"
+
+uint32_t sensorValue;
+
+void _init(){}
+
+int main(void){
+
+    initialise();
+    usart2TxInit();
+    startConversion();
+    
+    while(1){
+        
+        sensorValue = adcRead();
+        printf("%lu\n\r",sensorValue);
+
+    }
+    return 0;
+}
